@@ -18,11 +18,22 @@ def index():
         .udb-iframe { width: 100%; height: 100%; border: none; }
         .sidebar-assistant { flex: 3; display: flex; flex-direction: column; background: #f9f9f9; min-width: 350px; }
         .sidebar-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
-        .sidebar-logo { width: 50px; height: auto; }
+        
+        /* LOGO AGRANDI */
+        .sidebar-logo { height: 60px; width: auto; }
+        
         .sidebar-chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* BULLES DE MESSAGE */
         .msg-bubble { padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.4; }
         .user { align-self: flex-end; background: #007bff; color: white; }
-        .ai { align-self: flex-start; background: #eee; color: #333; }
+        
+        /* STYLE IA AVEC SAUTS DE LIGNE */
+        .ai { align-self: flex-start; background: #eee; color: #333; white-space: pre-wrap; word-wrap: break-word; }
+        
+        /* STYLE MESSAGE PATIENCE */
+        .loading-text { font-style: italic; color: #666; display: block; }
+        
         .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
         input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
@@ -35,16 +46,16 @@ def index():
         </div>
         <div class="sidebar-assistant">
             <div class="sidebar-header">
-                <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo" style="height: 60px; width: auto;">
+                <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo">
                 <div><strong>Assistant IA UDB</strong><br><small></small></div>
             </div>
             <div id="chat-box" class="sidebar-chat-box">
                 <div class="msg-bubble ai">Bienvenue ! Comment puis-je vous aider ?</div>
             </div>
             <div class="sidebar-input-area">
-    <input type="text" id="user-input" placeholder="Posez votre question..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); sendMessage(); }">
-    <button onclick="sendMessage()" id="send-btn">➤</button>
-</div>
+                <input type="text" id="user-input" placeholder="Posez votre question..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); sendMessage(); }">
+                <button onclick="sendMessage()" id="send-btn">➤</button>
+            </div>
         </div>
     </div>
 
@@ -54,17 +65,23 @@ def index():
             const chatBox = document.getElementById('chat-box');
             if (!input.value.trim()) return;
 
-            // Ajouter message utilisateur
-            chatBox.innerHTML += `<div class="msg-bubble user">${input.value}</div>`;
+            const query = input.value;
+
+            // 1. Ajouter le message de l'utilisateur
+            chatBox.innerHTML += `<div class="msg-bubble user">${query}</div>`;
+
+            // 2. Créer la bulle de l'IA avec le message d'attente
             const aiMsg = document.createElement('div');
             aiMsg.className = 'msg-bubble ai';
-            aiMsg.innerText = "L'assistant réfléchit...";
+            aiMsg.innerHTML = '<span class="loading-text">Veuillez patienter, je recherche l\'information...</span>';
             chatBox.appendChild(aiMsg);
-            
-            const query = input.value;
-            input.value = "";
+
+            // 3. Préparer l'interface
+            input.value = ""; 
+            chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
+                // VERIFIE BIEN CETTE IP SI ELLE EST STATIQUE
                 const response = await fetch("http://13.39.8.176:8000/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -72,7 +89,7 @@ def index():
                 });
 
                 const reader = response.body.getReader();
-                aiMsg.innerText = ""; // On efface le message de chargement
+                aiMsg.innerText = ""; // On efface "Veuillez patienter" dès que l'IA commence à répondre
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -88,4 +105,6 @@ def index():
 </body>
 </html>
     ''')
+
+if __name__ == "__main__":
     app.run()
