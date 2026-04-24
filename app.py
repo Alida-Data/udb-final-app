@@ -18,25 +18,14 @@ def index():
         .udb-iframe { width: 100%; height: 100%; border: none; }
         .sidebar-assistant { flex: 3; display: flex; flex-direction: column; background: #f9f9f9; min-width: 350px; }
         .sidebar-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
-        
-        .sidebar-logo { height: 60px; width: auto; }
-        
+        .sidebar-logo { height: 60px; width: auto; } /* Logo agrandi ici */
         .sidebar-chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg-bubble { padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.4; }
         .user { align-self: flex-end; background: #007bff; color: white; }
-        .ai { align-self: flex-start; background: #eee; color: #333; white-space: pre-wrap; word-wrap: break-word; }
-        
-        .loading-text { font-style: italic; color: #666; font-size: 13px; }
-        
-        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; background: white; }
-        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
+        .ai { align-self: flex-start; background: #eee; color: #333; white-space: pre-wrap; }
+        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:disabled { background: #ccc; }
-
-        @media (max-width: 768px) {
-            .website-container { display: none; }
-            .sidebar-assistant { flex: 1; width: 100%; }
-        }
     </style>
 </head>
 <body>
@@ -53,8 +42,8 @@ def index():
                 <div class="msg-bubble ai">Bienvenue ! Comment puis-je vous aider ?</div>
             </div>
             <div class="sidebar-input-area">
-                <input type="text" id="user-input" placeholder="Posez votre question..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); sendMessage(); }">
-                <button onclick="sendMessage()" id="send-btn">➤</button>
+                <input type="text" id="user-input" placeholder="Posez votre question..." onkeydown="if(event.key === 'Enter') sendMessage()">
+                <button onclick="sendMessage()">➤</button>
             </div>
         </div>
     </div>
@@ -63,24 +52,16 @@ def index():
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const chatBox = document.getElementById('chat-box');
-            const btn = document.getElementById('send-btn');
-            
-            const message = input.value.trim();
-            if (!message) return;
+            if (!input.value.trim()) return;
 
-            // Désactiver l'envoi pendant la charge
-            input.disabled = true;
-            btn.disabled = true;
-
-            // 1. Ajouter message utilisateur
-            chatBox.innerHTML += `<div class="msg-bubble user">${message}</div>`;
+            const query = input.value;
+            chatBox.innerHTML += `<div class="msg-bubble user">${query}</div>`;
             
-            // 2. Créer bulle IA avec message d'attente
             const aiMsg = document.createElement('div');
             aiMsg.className = 'msg-bubble ai';
-            aiMsg.innerHTML = '<span class="loading-text">Veuillez patienter, je recherche l\'information...</span>';
+            aiMsg.innerText = "Recherche en cours...";
             chatBox.appendChild(aiMsg);
-            
+
             input.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -88,13 +69,11 @@ def index():
                 const response = await fetch("http://13.39.8.176:8000/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: message })
+                    body: JSON.stringify({ query: query })
                 });
 
-                if (!response.ok) throw new Error();
-
                 const reader = response.body.getReader();
-                aiMsg.innerText = ""; // On vide le "Veuillez patienter"
+                aiMsg.innerText = ""; 
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -103,11 +82,7 @@ def index():
                     chatBox.scrollTop = chatBox.scrollHeight;
                 }
             } catch (e) {
-                aiMsg.innerText = "Désolé, le serveur AWS ne répond pas. Vérifiez que l'instance est allumée.";
-            } finally {
-                input.disabled = false;
-                btn.disabled = false;
-                input.focus();
+                aiMsg.innerText = "Erreur : Le serveur ne répond pas.";
             }
         }
     </script>
@@ -117,3 +92,4 @@ def index():
 
 if __name__ == "__main__":
     app.run()
+   
