@@ -35,7 +35,7 @@ def index():
         </div>
         <div class="sidebar-assistant">
             <div class="sidebar-header">
-                <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo">
+                <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo" style="height: 60px; width: auto;">
                 <div><strong>Assistant IA UDB</strong><br><small></small></div>
             </div>
             <div id="chat-box" class="sidebar-chat-box">
