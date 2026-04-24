@@ -27,23 +27,36 @@ def index():
         input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
 
-        /* ADAPTATION TELEPHONE (Mode Empilé) */
-        @media (max-width: 768px) {
-            .main-layout { 
-                flex-direction: column; 
-            }
-            .website-container { 
-                flex: none; 
-                height: 40vh; /* Le site prend 40% de l'écran */
-                border-right: none;
-                border-bottom: 2px solid #ccc;
-            }
-            .sidebar-assistant { 
-                flex: 1; 
-                height: 60vh; /* L'assistant prend 60% de l'écran */
-                min-width: 100%; 
-            }
-        }
+        /* ADAPTATION TELEPHONE FINALE */
+@media (max-width: 768px) {
+    .main-layout { 
+        flex-direction: column; 
+        overflow-y: auto; /* Permet de faire défiler toute la page si besoin */
+    }
+    .website-container { 
+        flex: none; 
+        height: 35vh; /* On réduit un peu le site (35% de l'écran) */
+        border-bottom: 2px solid #ccc;
+    }
+    .sidebar-assistant { 
+        flex: none; 
+        height: 65vh; /* On donne 65% de l'écran à l'assistant */
+        min-width: 100%; 
+        display: flex;
+        flex-direction: column;
+    }
+    .sidebar-chat-box {
+        flex: 1; /* La zone de chat prend tout l'espace restant */
+        overflow-y: auto;
+    }
+    .sidebar-input-area {
+        flex: none;
+        padding: 10px;
+        background: #fff;
+        position: sticky; /* Force la barre à rester visible en bas */
+        bottom: 0;
+    }
+}
     </style>
 </head>
 <body>
