@@ -18,14 +18,32 @@ def index():
         .udb-iframe { width: 100%; height: 100%; border: none; }
         .sidebar-assistant { flex: 3; display: flex; flex-direction: column; background: #f9f9f9; min-width: 350px; }
         .sidebar-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
-        .sidebar-logo { height: 60px; width: auto; } /* Logo agrandi ici */
+        .sidebar-logo { height: 60px; width: auto; }
         .sidebar-chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
         .msg-bubble { padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.4; }
         .user { align-self: flex-end; background: #007bff; color: white; }
         .ai { align-self: flex-start; background: #eee; color: #333; white-space: pre-wrap; }
-        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; background: #fff; }
         input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+        /* ADAPTATION TELEPHONE (Mode Empilé) */
+        @media (max-width: 768px) {
+            .main-layout { 
+                flex-direction: column; 
+            }
+            .website-container { 
+                flex: none; 
+                height: 40vh; /* Le site prend 40% de l'écran */
+                border-right: none;
+                border-bottom: 2px solid #ccc;
+            }
+            .sidebar-assistant { 
+                flex: 1; 
+                height: 60vh; /* L'assistant prend 60% de l'écran */
+                min-width: 100%; 
+            }
+        }
     </style>
 </head>
 <body>
@@ -92,4 +110,3 @@ def index():
 
 if __name__ == "__main__":
     app.run()
-   
