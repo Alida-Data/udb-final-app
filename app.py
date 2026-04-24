@@ -19,24 +19,24 @@ def index():
         .sidebar-assistant { flex: 3; display: flex; flex-direction: column; background: #f9f9f9; min-width: 350px; }
         .sidebar-header { padding: 15px; background: #fff; border-bottom: 1px solid #ddd; display: flex; align-items: center; gap: 10px; }
         
-        /* LOGO AGRANDI */
         .sidebar-logo { height: 60px; width: auto; }
         
         .sidebar-chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        
-        /* BULLES DE MESSAGE */
         .msg-bubble { padding: 10px 15px; border-radius: 15px; max-width: 85%; font-size: 14px; line-height: 1.4; }
         .user { align-self: flex-end; background: #007bff; color: white; }
-        
-        /* STYLE IA AVEC SAUTS DE LIGNE */
         .ai { align-self: flex-start; background: #eee; color: #333; white-space: pre-wrap; word-wrap: break-word; }
         
-        /* STYLE MESSAGE PATIENCE */
-        .loading-text { font-style: italic; color: #666; display: block; }
+        .loading-text { font-style: italic; color: #666; font-size: 13px; }
         
-        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
-        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+        .sidebar-input-area { padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; background: white; }
+        input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; outline: none; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:disabled { background: #ccc; }
+
+        @media (max-width: 768px) {
+            .website-container { display: none; }
+            .sidebar-assistant { flex: 1; width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -47,7 +47,7 @@ def index():
         <div class="sidebar-assistant">
             <div class="sidebar-header">
                 <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo">
-                <div><strong>Assistant IA UDB</strong><br><small></small></div>
+                <div><strong>Assistant IA UDB</strong></div>
             </div>
             <div id="chat-box" class="sidebar-chat-box">
                 <div class="msg-bubble ai">Bienvenue ! Comment puis-je vous aider ?</div>
@@ -63,33 +63,38 @@ def index():
         async function sendMessage() {
             const input = document.getElementById('user-input');
             const chatBox = document.getElementById('chat-box');
-            if (!input.value.trim()) return;
+            const btn = document.getElementById('send-btn');
+            
+            const message = input.value.trim();
+            if (!message) return;
 
-            const query = input.value;
+            // Désactiver l'envoi pendant la charge
+            input.disabled = true;
+            btn.disabled = true;
 
-            // 1. Ajouter le message de l'utilisateur
-            chatBox.innerHTML += `<div class="msg-bubble user">${query}</div>`;
-
-            // 2. Créer la bulle de l'IA avec le message d'attente
+            // 1. Ajouter message utilisateur
+            chatBox.innerHTML += `<div class="msg-bubble user">${message}</div>`;
+            
+            // 2. Créer bulle IA avec message d'attente
             const aiMsg = document.createElement('div');
             aiMsg.className = 'msg-bubble ai';
             aiMsg.innerHTML = '<span class="loading-text">Veuillez patienter, je recherche l\'information...</span>';
             chatBox.appendChild(aiMsg);
-
-            // 3. Préparer l'interface
-            input.value = ""; 
+            
+            input.value = "";
             chatBox.scrollTop = chatBox.scrollHeight;
 
             try {
-                // VERIFIE BIEN CETTE IP SI ELLE EST STATIQUE
                 const response = await fetch("http://13.39.8.176:8000/ask", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ query: query })
+                    body: JSON.stringify({ query: message })
                 });
 
+                if (!response.ok) throw new Error();
+
                 const reader = response.body.getReader();
-                aiMsg.innerText = ""; // On efface "Veuillez patienter" dès que l'IA commence à répondre
+                aiMsg.innerText = ""; // On vide le "Veuillez patienter"
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -98,7 +103,11 @@ def index():
                     chatBox.scrollTop = chatBox.scrollHeight;
                 }
             } catch (e) {
-                aiMsg.innerText = "Erreur de connexion au serveur AWS.";
+                aiMsg.innerText = "Désolé, le serveur AWS ne répond pas. Vérifiez que l'instance est allumée.";
+            } finally {
+                input.disabled = false;
+                btn.disabled = false;
+                input.focus();
             }
         }
     </script>
