@@ -27,34 +27,41 @@ def index():
         input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
         button { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; }
 
-        /* ADAPTATION TELEPHONE FINALE */
+        /* ADAPTATION TELEPHONE - SOLUTION FORCEE */
 @media (max-width: 768px) {
+    body, html {
+        overflow: hidden; /* Empêche la page entière de bouger */
+        height: 100%;
+    }
     .main-layout { 
         flex-direction: column; 
-        overflow-y: auto; /* Permet de faire défiler toute la page si besoin */
+        height: 100vh;
     }
     .website-container { 
         flex: none; 
-        height: 35vh; /* On réduit un peu le site (35% de l'écran) */
-        border-bottom: 2px solid #ccc;
+        height: 30vh; /* On réduit encore un peu le site */
     }
     .sidebar-assistant { 
-        flex: none; 
-        height: 65vh; /* On donne 65% de l'écran à l'assistant */
-        min-width: 100%; 
-        display: flex;
-        flex-direction: column;
+        flex: 1; 
+        height: 70vh;
+        position: relative; /* Important pour le placement de l'input */
     }
     .sidebar-chat-box {
-        flex: 1; /* La zone de chat prend tout l'espace restant */
+        height: calc(70vh - 70px); /* On laisse pile la place pour l'input */
         overflow-y: auto;
+        padding-bottom: 80px; /* Espace de sécurité */
     }
     .sidebar-input-area {
-        flex: none;
-        padding: 10px;
-        background: #fff;
-        position: sticky; /* Force la barre à rester visible en bas */
+        position: fixed; /* SOLUTION RADICALE : Fixé au bas de l'écran */
         bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background: #fff;
+        z-index: 9999; /* Toujours au-dessus du reste */
+        border-top: 2px solid #007bff;
+        padding: 10px;
+        box-sizing: border-box;
     }
 }
     </style>
