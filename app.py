@@ -36,15 +36,15 @@ def index():
         <div class="sidebar-assistant">
             <div class="sidebar-header">
                 <img src="https://udb-sn.com/images/logo.png" class="sidebar-logo">
-                <div><strong>Assistant IA UDB</strong><br><small>par Alida Ndin</small></div>
+                <div><strong>Assistant IA UDB</strong><br><small></small></div>
             </div>
             <div id="chat-box" class="sidebar-chat-box">
                 <div class="msg-bubble ai">Bienvenue ! Comment puis-je vous aider ?</div>
             </div>
             <div class="sidebar-input-area">
-                <input type="text" id="user-input" placeholder="Posez votre question...">
-                <button onclick="sendMessage()">➤</button>
-            </div>
+    <input type="text" id="user-input" placeholder="Posez votre question..." onkeydown="if(event.key === 'Enter') { event.preventDefault(); sendMessage(); }">
+    <button onclick="sendMessage()" id="send-btn">➤</button>
+</div>
         </div>
     </div>
 
