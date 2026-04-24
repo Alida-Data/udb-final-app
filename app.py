@@ -109,6 +109,7 @@ def index():
             try {
                 const response = await fetch("http://13.39.8.176:8000/ask", {
                     method: "POST",
+                    mode: "cors", // Ajoute cette ligne
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ query: query })
                 });
