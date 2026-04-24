@@ -61,7 +61,10 @@ def index():
         z-index: 9999; /* Toujours au-dessus du reste */
         border-top: 2px solid #007bff;
         padding: 10px;
+        /* Ajoute la marge ici directement */
+        padding-bottom: 25px; 
         box-sizing: border-box;
+        
     }
 }
     </style>
