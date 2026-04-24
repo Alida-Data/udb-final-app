@@ -111,6 +111,7 @@ def index():
                     method: "POST",
                     mode: "cors", // Ajoute cette ligne
                     headers: { "Content-Type": "application/json" },
+                    referrerPolicy: "no-referrer-when-downgrade",
                     body: JSON.stringify({ query: query })
                 });
 
